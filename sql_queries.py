@@ -20,9 +20,12 @@ songplay_table_create = ("""
                         artist_id varchar,
                         session_id int,
                         location varchar,
-                        user_agent varchar
+                        user_agent varchar,
+                        CONSTRAINT start_time FOREIGN KEY (start_time) REFERENCES time(start_time),
+                        CONSTRAINT user_id FOREIGN KEY (user_id) REFERENCES users(user_id),
+                        CONSTRAINT song_id FOREIGN KEY (song_id) REFERENCES songs(song_id),
+                        CONSTRAINT artist_id FOREIGN KEY (artist_id) REFERENCES artists(artist_id)
                         )
-                        
                         """)
 
 user_table_create = ("""
@@ -139,5 +142,5 @@ song_select =  ("""
 
 # QUERY LISTS
 
-create_table_queries = [songplay_table_create, user_table_create, song_table_create, artist_table_create, time_table_create]
+create_table_queries = [user_table_create, song_table_create, artist_table_create, time_table_create, songplay_table_create]
 drop_table_queries = [songplay_table_drop, user_table_drop, song_table_drop, artist_table_drop, time_table_drop]
