@@ -38,11 +38,11 @@ And below is an example of what the data in a log file looks like.<br/>
 ## Schema
 Using the song and log datasets to create a star schema optimized for queries on song play analysis. This includes the following tables.
 
-**Fact Table** <br/>
+**Fact Table** <br/><br/>
 **1. songplays** records in log data associated with song plays i.e. records with page `NextSong` <br/>
 - songplay_id, start_time, user_id, level, song_id, artist_id, session_id, location, user_agent <br/><br/>
 
-**Dimension Tables** <br/>
+**Dimension Tables** <br/><br/>
 **2. users** users in the app <br/>
 - user_id, first_name, last_name, gender, level <br/>
 
