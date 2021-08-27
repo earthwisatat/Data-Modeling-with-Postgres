@@ -6,20 +6,43 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
-    # open song file
+    '''
+    Inserts Record into Song Table and Artist Table
+    - Select columns for artist ID, name, location, latitude, and longitude
+    - Use df.values to select just the values from the dataframe
+    - Index to select the first (only) record in the dataframe
+    - Convert the array to a list and set it to song_data and artist_data
+    
+    Parameters:
+            cur     : Allows Python code to execute PostgreSQL command in a database session. (created by the connection.cursor())
+            filepath: The location of the data to be read.
+    '''
+     # open song file
     df = pd.read_json(filepath, lines=True)
-
-    # insert song record
-    song_data = list(df[['song_id', 'title', 'artist_id', 'year', 'duration']].values.flatten())
+    
+    # insert artist record
+    song_data = list(df[['song_id', 'title', 'artist_id', 'year', 'duration']].values[0])
     cur.execute(song_table_insert, song_data)
 
-    
     # insert artist record
     artist_data = list(df[['artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude']].values.flatten())
     cur.execute(artist_table_insert, artist_data)
 
 
 def process_log_file(cur, filepath):
+    '''
+    Inserts records by processing from log_data
+    
+    - Filter records by NextSong action
+    - Convert the ts timestamp column to datetime
+    - Extract the timestamp, hour, day, week of year, month, year, and weekday from the ts column and set time_data to a list containing these values in order
+    - Specify labels for these columns and set to column_labels
+    - Create a dataframe, time_df, containing the time data for this file by combining column_labels and time_data into a dictionary and converting this into a dataframe
+    
+    Parameters:
+            cur     : Allows Python code to execute PostgreSQL command in a database session. (created by the connection.cursor())
+            filepath: The location of the data to be read.
+    '''
     # open log file
     df = pd.read_json(filepath, lines=True)
 
@@ -62,7 +85,17 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    '''
+    Get all files matching extension from directory to processes the data in each function you have created
+    
+    Parameters:
+            cur     : Allows Python code to execute PostgreSQL command in a database session. (created by the connection.cursor())
+            conn    : Handles the connection to a PostgreSQL database instance.
+            filepath: The location of the data to be read.
+            func    : The function that you want to process
+    '''
     # get all files matching extension from directory
+    
     all_files = []
     for root, dirs, files in os.walk(filepath):
         files = glob.glob(os.path.join(root,'*.json'))
@@ -81,6 +114,12 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
+    '''
+    - Establishes connection with the sparkify database and getscursor to it.  
+    - Iterate over files and process with song_data.  
+    - Iterate over files and process with log_data.  
+    - Finally, closes the connection. 
+    '''
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
